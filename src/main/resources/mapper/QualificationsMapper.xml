@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qf.qualifications.mapper.QualificationsMapper">
+    <!--查询所有资质-->
+    <select id="selectAllQualifications" resultType="com.qf.qualifications.pojo.Qualifications">
+            SELECT * FROM QUALIfiCATIONS
+    </select>
+    <!--添加资质-->
+    <insert id="insertOneQualifications" parameterType="com.qf.qualifications.pojo.Qualifications">
+        INSERT INTO QUALIfiCATIONS VALUES(SEQ_PK_qualifications.nextval,#{qualifyName})
+    </insert>
+    <!--删除资质-->
+    <delete id="deleteOneQualifications" parameterType="int">
+        DELETE FROM QUALIfiCATIONS WHERE qualifyId=#{qualifyId}
+    </delete>
+    <!--修改资质信息-->
+    <update id="updateOneQualifications" parameterType="com.qf.qualifications.pojo.Qualifications">
+        UPDATE QUALIfiCATIONS
+        <set>
+            <if test="qualifyName!=null and qualifyName!=''">
+                qualifyName=#{qualifyName},
+            </if>
+        </set>
+        WHERE qualifyId=#{qualifyId}
+    </update>
+    <!--查询单个资质信息-->
+    <select id="selectOneQualifications" parameterType="int" resultType="com.qf.qualifications.pojo.Qualifications">
+        SELECT *FROM QUALIfiCATIONS WHERE qualifyId=#{qualifyId}
+    </select>
+    <!--模糊查询-->
+    <select id="selectLikeAllQualifications" parameterType="com.qf.qualifications.pojo.Qualifications" resultType="com.qf.qualifications.pojo.Qualifications">
+        SELECT * FROM QUALIfiCATIONS
+        <where>
+            <if test="qualifyName!=null and qualifyName!=''">
+                or qualifyName like concat(concat('%',#{qualifyName}),'%')
+            </if>
+        </where>
+    </select>
+
+</mapper>

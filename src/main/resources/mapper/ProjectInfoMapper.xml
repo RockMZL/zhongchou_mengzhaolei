@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qf.projectinfo.mapper.ProjectInfoMapper">
+    <!--查询所有项目-->
+    <select id="selectAllProject" resultType="com.qf.projectinfo.pojo.ProjectInfo">
+            SELECT * FROM PROJECT
+    </select>
+    <!--添加项目-->
+    <insert id="insertOneProject" parameterType="com.qf.projectinfo.pojo.ProjectInfo">
+        INSERT INTO PROJECT VALUES(SEQ_PK_PROJECT.nextval,#{projectName},#{projectInfo})
+    </insert>
+    <!--删除项目-->
+    <delete id="deleteOneProject" parameterType="int">
+        DELETE FROM PROJECT WHERE PROJECTID=#{projectId}
+    </delete>
+    <!--修改项目信息-->
+    <update id="updateOneProject" parameterType="com.qf.projectinfo.pojo.ProjectInfo">
+        UPDATE PROJECT
+        <set>
+            <if test="projectName!=null and projectName!=''">
+                  projectName=#{projectName},
+            </if>
+            <if test="projectInfo!=null and projectInfo!=''">
+                  projectInfo=#{projectInfo},
+            </if>
+        </set>
+        WHERE PROJECTID=#{projectId}
+    </update>
+    <!--查询单个项目信息-->
+    <select id="selectOneProject" parameterType="int" resultType="com.qf.projectinfo.pojo.ProjectInfo">
+        SELECT *FROM PROJECT WHERE PROJECTID=#{projectId}
+    </select>
+    <!--模糊查询-->
+    <select id="selectLikeAllProjects" parameterType="com.qf.projectinfo.pojo.ProjectInfo" resultType="com.qf.projectinfo.pojo.ProjectInfo">
+        SELECT * FROM PROJECT
+        <where>
+            <if test="projectName!=null and projectName!=''">
+                or projectName like concat(concat('%',#{projectName}),'%')
+            </if>
+            <if test="projectInfo!=null and projectInfo!=''">
+                or projectInfo like concat(concat('%',#{projectInfo}),'%')
+            </if>
+        </where>
+    </select>
+
+</mapper>

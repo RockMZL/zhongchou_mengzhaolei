@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qf.userinfo.mapper.UserInfoMapper">
+    <!--查询所有用户信息-->
+    <select id="findAll" resultType="com.qf.userinfo.pojo.UserInfo">
+        SELECT * FROM   USERINFO
+    </select>
+    <!--模糊查询用户信息-->
+    <select id="selectLike" resultType="com.qf.userinfo.pojo.UserInfo" parameterType="com.qf.userinfo.pojo.UserInfo">
+        SELECT * FROM USERINFO
+        <where>
+            <if test="userName!=null and userName!=''">
+                OR USERNAME like concat(concat('%',#{userName}),'%')
+            </if>
+            <if test="userPass!=null and userPass!=''">
+                OR USERPASS like concat(concat('%',#{userPass}),'%')
+            </if>
+            <if test="email!=null and email!=''">
+                OR EMAIL like concat(concat('%',#{email}),'%')
+            </if>
+            <if test="accounts!=null and accounts!=''">
+                OR ACCOUNTS like concat(concat('%',#{accounts}),'%')
+            </if>
+        </where>
+    </select>
+    <!--查询单个-->
+    <select id="selectOne" parameterType="com.qf.userinfo.pojo.UserInfo" resultType="com.qf.userinfo.pojo.UserInfo">
+        SELECT * FROM USERINFO
+        <where>
+            <if test="userName!=null and userName!=''">
+                and USERNAME=#{userName}
+            </if>
+            <if test="userPass!=null and userPass!=''">
+                and USERPASS=#{userPass}
+            </if>
+            <if test="email!=null and email!=''">
+                and EMAIL=#{email}
+            </if>
+            <if test="accounts!=null and accounts!=''">
+                and ACCOUNTS=#{accounts}
+            </if>
+            <if test="status!=null">
+                and STATUS=#{status}
+            </if>
+            <if test="type!=null">
+                and TYPE=#{type}
+            </if>
+        </where>
+    </select>
+    <!--添加用户信息-->
+    <insert id="addUserinfo" parameterType="com.qf.userinfo.pojo.UserInfo">
+        insert into  USERINFO values (seq_pk_user.nextval,#{userName,jdbcType=VARCHAR},#{userPass,jdbcType=VARCHAR},#{email,jdbcType=VARCHAR},#{accounts,jdbcType=VARCHAR},#{status,jdbcType=VARCHAR},#{type,jdbcType=VARCHAR})
+    </insert>
+    <!--修改用户信息-->
+    <update id="updateUserinfo" parameterType="com.qf.userinfo.pojo.UserInfo">
+        update USERINFO
+        <set>
+            <if test="userName!=null and userName!=''">
+                USERNAME=#{userName},
+            </if>
+            <if test="userPass!=null and userPass!=''">
+                USERPASS=#{userPass},
+            </if>
+            <if test="email!=null and email!=''">
+                EMAIL=#{email},
+            </if>
+            <if test="accounts!=null and accounts!=''">
+                ACCOUNTS=#{accounts},
+            </if>
+            <if test="status!=null and status!=''">
+                STATUS=#{status},
+            </if>
+            <if test="type!=null and type!=''">
+                type=#{type},
+            </if>
+        </set>
+        where USERID=#{userId}
+    </update>
+    <!--删除用户信息-->
+    <delete id="deleteUserinfo" parameterType="int">
+        delete from USERINFO where USERID=#{userId}
+    </delete>
+    <!--查询单个用户-->
+    <select id="selectOneById" parameterType="int" resultType="com.qf.userinfo.pojo.UserInfo">
+        select * from USERINFO where USERID=#{userId}
+    </select>
+</mapper>

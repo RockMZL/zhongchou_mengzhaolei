@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qf.roleinfo.mapper.RoleInfoMapper">
+    <select id="selectAllRoleinfo" resultType="com.qf.roleinfo.pojo.RoleInfo">
+        SELECT * from ROLEINFO
+    </select>
+    <!--模糊查询角色信息-->
+    <select id="selectLike" resultType="com.qf.roleinfo.pojo.RoleInfo" parameterType="com.qf.roleinfo.pojo.RoleInfo">
+        SELECT * FROM RoleInfo
+        <where>
+            <if test="roleId!=null and roleId!=''">
+                or roleID like concat(concat('%',#{roleId}),'%')
+            </if>
+            <if test="roleName!=null and roleName!=''">
+                or roleName like concat(concat('%',#{roleName}),'%')
+            </if>
+        </where>
+    </select>
+
+    <select id="selectOne" parameterType="com.qf.roleinfo.pojo.RoleInfo" resultType="com.qf.roleinfo.pojo.RoleInfo">
+        SELECT * FROM ROLEINFO
+        <where>
+            <if test="roleId!=null and roleId!=''">
+                and roleID=#{roleId}
+            </if>
+            <if test="roleName!=null and roleName!=''">
+                and ROLENAME=#{roleName}
+            </if>
+        </where>
+    </select>
+    <!--添加角色信息-->
+    <insert id="addRoleinfo" parameterType="com.qf.roleinfo.pojo.RoleInfo">
+        insert into  Roleinfo values (SEQ_PK_ROLE.nextval,#{roleName},#{status})
+    </insert>
+    <!--修改角色信息-->
+    <update id="updateRoleinfo" parameterType="com.qf.roleinfo.pojo.RoleInfo">
+        update Roleinfo
+        <set>
+            <if test="roleName!=null and roleName!=''">
+                roleName=#{roleName},
+            </if>
+            <if test="status!=null and status!=''">
+                status=#{status},
+            </if>
+        </set>
+        where ROLEID=#{roleId}
+    </update>
+    <!--删除角色信息-->
+    <delete id="deleteRoleinfo" parameterType="int">
+        delete from Roleinfo where RoleID=#{roleID}
+    </delete>
+    <!-- 删除中间表角色菜单信息-->
+    <delete id="deleteRole_MenuInfo" parameterType="int">
+        delete from Role_Menu where RoleId=#{roleId}
+    </delete>
+    <!--根据userId查询角色-->
+    <select id="selectUserRoleById" parameterType="java.lang.Integer" resultType="com.qf.roleinfo.pojo.RoleInfo">
+    select * from  user_role ur1,roleinfo r1  where ur1.roleid=r1.roleid and ur1.userid=#{id} and r1.status!='失效'
+  </select>
+    <!--根据userId查询没有的角色-->
+    <select id="selectNotUserRoleById" parameterType="java.lang.Integer" resultType="com.qf.roleinfo.pojo.RoleInfo">
+    select * from roleinfo where rolename not in(select rolename from  user_role ur1,roleinfo r1  where ur1.roleid=r1.roleid and ur1.userid=#{id}) and roleinfo.status!='失效'
+    </select>
+    <!-- 根据用户id和角色在中间表中添加角色信息-->
+    <insert id="insertDistributeUserRole" parameterType="com.qf.roleinfo.vo.RoleInfoVo">
+        insert into user_role(urid,userid,roleId)
+        select seq_pk_userrole.nextval,cd.* from(
+        <foreach collection="array" item="roleId" separator="union all">
+            select #{userId},#{roleId} from dual
+        </foreach>
+        )cd
+    </insert>
+    <!-- 根据用户id删除中间表角色信息-->
+    <insert id="deleteUserRole" parameterType="java.lang.Integer">
+        delete from user_role where userid=#{userid}
+    </insert>
+
+</mapper>

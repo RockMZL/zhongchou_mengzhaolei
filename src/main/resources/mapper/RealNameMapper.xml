@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qf.realname.mapper.RealNameMapper">
+
+    <!--添加审核信息-->
+    <insert id="insertOneRealName" parameterType="com.qf.realname.pojo.RealName">
+         INSERT INTO REALNAMESYSTEM VALUES(SEQ_PK_REALNAMESYSTEM.nextval,#{processName},#{accountName},#{realName},#{idCard},#{phone},#{idPhoto},#{status})
+    </insert>
+    <!--查询所有信息-->
+    <select id="getAllRealName" resultType="com.qf.realname.pojo.RealName">
+        SELECT *FROM REALNAMESYSTEM
+    </select>
+    <!--修改认证信息-->
+    <update id="updateRealName" parameterType="com.qf.realname.pojo.RealName">
+        update REALNAMESYSTEM
+        <set>
+            <if test="processName!=null and processName!=''">
+                processName=#{processName},
+            </if>
+            <if test="accountName!=null and accountName!=''">
+                accountName=#{accountName},
+            </if>
+            <if test="realName!=null and realName!=''">
+                realName=#{realName},
+            </if>
+            <if test="idCard!=null and idCard!=''">
+                idCard=#{idCard}
+            </if>
+             <if test="phone!=null and phone!=''">
+                 phone=#{phone}
+            </if>
+             <if test="idPhoto!=null and idPhoto!=''">
+                 idPhoto=#{idPhoto}
+            </if>
+            <if test="status!=null and status!=''">
+                status=#{status}
+            </if>
+        </set>
+        where rnsId=#{rnsId}
+    </update>
+    <!--查询单个资质审核信息-->
+    <select id="selectOneRealName" parameterType="String" resultType="com.qf.realname.pojo.RealName">
+        SELECT *FROM REALNAMESYSTEM WHERE accountName=#{accountName}
+    </select>
+
+
+</mapper>

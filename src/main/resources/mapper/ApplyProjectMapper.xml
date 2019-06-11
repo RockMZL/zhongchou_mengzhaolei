@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qf.applyproject.mapper.ApplyProjectMapper">
+
+   <!-- 添加项目信息-->
+    <insert id="insertApplyProject" parameterType="com.qf.applyproject.pojo.ApplyProject">
+        insert into APPLYPROJECT values (SEQ_PK_APPLYPROJECT.nextval,#{projectName},#{accountName},#{type},
+        #{intro},#{fundingMoney},#{day},#{projectHeader},#{projectetails},#{selfintrRoduction},#{detialEdintroDuction},
+        #{phone},#{customerPhone},#{status},#{raiseMoney},#{createTime})
+    </insert>
+    <!--查询所有待审核项目信息-->
+    <select id="getAllApplyProject" resultType="com.qf.applyproject.pojo.ApplyProject">
+        SELECT  *FROM APPLYPROJECT
+    </select>
+    <!--修改审核信息-->
+    <update id="updateApplyProject" parameterType="com.qf.applyproject.pojo.ApplyProject">
+        update APPLYPROJECT
+        <set>
+            <if test="status!=null and status!=''">
+                status=#{status},
+            </if>
+            <if test="raiseMoney!=null and raiseMoney!=''">
+                raiseMoney=#{raiseMoney},
+            </if>
+        </set>
+        where projectId=#{projectId}
+    </update>
+    <select id="selectApplyProjectInfo" resultType="com.qf.applyproject.pojo.ApplyProject">
+        select * from APPLYPROJECT where status='审核通过'
+    </select>
+   <!-- 查询单个项目信息-->
+    <select id="getOneApplyProject" parameterType="int" resultType="com.qf.applyproject.pojo.ApplyProject">
+        SELECT *FROM APPLYPROJECT WHERE projectId=#{projectId}
+    </select>
+
+
+</mapper>

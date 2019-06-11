@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qf.reward.mapper.RewardMapper">
+    <!-- 添加回报消息-->
+    <insert id="insertReward" parameterType="com.qf.reward.pojo.Reward">
+        insert into REWARD values (SEQ_PK_REWARD.nextval,#{projectName},#{type},#{payMoney},
+        #{rewardContent},#{explainPhoto},#{rewardNumber},#{singleNumber},#{freightMoney},#{invoice},#{rewardTime})
+    </insert>
+   <!-- 查看回报信息-->
+    <select id="getAllReward" parameterType="String" resultType="com.qf.reward.pojo.Reward">
+        select *from REWARD where projectName=#{projectName}
+    </select>
+   <!-- 查询单个回报信息-->
+    <select id="getOneReward" resultType="com.qf.reward.pojo.Reward" parameterType="int">
+        SELECT * FROM REWARD WHERE rewardId=#{rewardId}
+    </select>
+
+
+</mapper>

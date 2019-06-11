@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qf.menuinfo.mapper.MenuInfoMapper">
+    <!--查询角色菜单许可-->
+    <resultMap id="getAllMenuInfoMap" type="com.qf.menuinfo.dto.MenuInfoDto">
+        <id property="id" column="menuid"/>
+        <result property="name" column="menuName"/>
+        <result property="url" column="jumpurl"/>
+        <result property="icon" column="icourl"/>
+        <result property="checked" column="checked"/>
+        <collection property="children" ofType="com.qf.menuinfo.dto.MenuInfoDto" column="{parentId=menuId,rid=rid}"
+                    select="selectChilds">
+        </collection>
+    </resultMap>
+    <select id="getAllMenuInfo" resultMap="getAllMenuInfoMap" parameterType="java.lang.Integer">
+          select mi.*,decode(rm.menuid,null,'false','true') checked,#{rid} rid from menu mi
+          left join role_menu rm on rm.ROLEID=#{rid} and mi.MENUID=rm.menuid where mi.PARENTID=0
+    </select>
+    <select id="selectChilds" resultMap="getAllMenuInfoMap" parameterType="java.util.Map">
+          select mi.*,decode(rm.menuid,null,'false','true') checked,${rid} rid from menu mi
+          left join role_menu rm on rm.ROLEID=#{rid} and mi.MENUID=rm.menuid where mi.PARENTID=#{parentId}
+    </select>
+
+    <!--查询所有菜单信息-->
+    <resultMap id="getAllMenuInfo" type="com.qf.menuinfo.dto.MenuInfoDto">
+        <id property="id" column="menuid"/>
+        <result property="name" column="menuName"/>
+        <result property="url" column="jumpurl"/>
+        <result property="icon" column="icourl"/>
+        <collection property="children" ofType="com.qf.menuinfo.dto.MenuInfoDto" column="{parentId=menuId}"
+                    select="getChilds">
+        </collection>
+    </resultMap>
+    <select id="getAllMenu" resultMap="getAllMenuInfo">
+          select menu.* from menu where menu.PARENTID=0
+    </select>
+    <select id="getChilds" resultMap="getAllMenuInfo" parameterType="java.util.Map">
+          select menu.* from menu where menu.PARENTID=#{parentId}
+    </select>
+
+
+    <!--模糊查询菜单信息-->
+    <select id="selectLike" resultType="com.qf.menuinfo.pojo.MenuInfo" parameterType="com.qf.menuinfo.pojo.MenuInfo">
+        SELECT * FROM MENU
+        <where>
+            <if test="menuId!=null and menuId!=''">
+                or menuId=#{menuId}
+            </if>
+            <if test="menuName!=null and menuName!=''">
+                or menuName=#{menuName}
+            </if>
+            <if test="jumpUrl!=null and jumpUrl!=''">
+                or jumpUrl=#{jumpUrl}
+            </if>
+            <if test="parentId!=null and parentId!=''">
+                or parentId=#{parentId}
+            </if>
+            <if test="icoUrl!=null and icoUrl!=''">
+                or icoUrl=#{icoUrl}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectOne" parameterType="com.qf.menuinfo.pojo.MenuInfo" resultType="com.qf.menuinfo.pojo.MenuInfo">
+        SELECT * FROM MENU
+        <where>
+            <if test="menuId!=null and menuId!=''">
+                and menuId=#{menuId}
+            </if>
+            <if test="menuName!=null and menuName!=''">
+                and menuName=#{menuName}
+            </if>
+            <if test="jumpUrl!=null and jumpUrl!=''">
+                and jumpUrl=#{jumpUrl}
+            </if>
+            <if test="parentId!=null and parentId!=''">
+                and parentId=#{parentId}
+            </if>
+            <if test="icoUrl!=null and icoUrl!=''">
+                and icoUrl=#{icoUrl}
+            </if>
+        </where>
+    </select>
+    <!--添加菜单信息-->
+    <insert id="addMenuinfo" parameterType="com.qf.menuinfo.pojo.MenuInfo">
+        insert into  MENU values (SEQ_PK_MENU.nextval,#{menuName},#{jumpUrl},#{parentId},#{icoUrl})
+    </insert>
+    <!--修改菜单信息-->
+    <update id="updateMenuinfo" parameterType="com.qf.menuinfo.pojo.MenuInfo">
+        update MENU
+        <set>
+            <if test="menuName!=null and menuName!=''">
+                menuName=#{menuName},
+            </if>
+            <if test="jumpUrl!=null and jumpUrl!=''">
+                jumpUrl=#{jumpUrl},
+            </if>
+            <if test="parentId!=null and parentId!=''">
+                parentId=#{parentId},
+            </if>
+            <if test="icoUrl!=null and icoUrl!=''">
+                icoUrl=#{icoUrl}
+            </if>
+        </set>
+        where menuId=#{menuId}
+    </update>
+    <!--删除菜单信息-->
+    <delete id="deleteMenuinfo" parameterType="int">
+        delete from MENU where menuId=#{menuId}
+    </delete>
+    <!-- 删除角色菜单分配-->
+    <delete id="deleteDistributeMenuinfo" parameterType="int">
+        delete from role_menu where roleId=#{id}
+    </delete>
+    <!-- 角色菜单分配-->
+    <insert id="insertDistributeMenuInfo" parameterType="com.qf.menuinfo.vo.DistributeVo">
+        insert into role_menu(RMId,roleId,menuId)
+        select SEQ_PK_role_menu.nextval,cd.* from(
+        <foreach collection="menus" item="menuId" separator="union all">
+            select #{rId},#{menuId} from dual
+        </foreach>
+        )cd
+    </insert>
+
+    <!--查询所有菜单信息-->
+    <select id="allMenuInfo" resultType="com.qf.menuinfo.pojo.MenuInfo">
+        select *from MENU
+    </select>
+
+    <!--<resultMap id="getAllMenuInfoMap1" type="com.qf.menuinfo.dto.MenuInfoDto">
+        <id property="id" column="menuid"/>
+        <result property="name" column="menuName"/>
+        <result property="url" column="jumpurl"/>
+        <result property="icon" column="icourl"/>
+        <collection property="children" ofType="com.qf.menuinfo.dto.MenuInfoDto" column="{parentId=menuId,rid=rid}"
+                    select="selectChilds1">
+        </collection>
+    </resultMap>-->
+    <!--<select id="selectUserRoleMenu" resultMap="getAllMenuInfoMap1" parameterType="com.qf.menuinfo.vo.UserRoleVo">
+        <foreach collection="roles" item="roleId" separator="union">
+            select menu.*,#{roleId} rid from menu,role_menu rm where
+            rm.roleId=#{roleId} and rm.menuId=menu.menuId and menu.parentId=0
+        </foreach>
+    </select>-->
+    <!--<select id="selectChilds1" resultMap="getAllMenuInfoMap1" parameterType="java.util.Map">
+          select menu.*,${rid} rid from menu,role_menu rm where rm.ROLEID=#{rid} and menu.menuId=rm.menuid and menu.PARENTID=#{parentId}
+    </select>-->
+    <resultMap id="getAllMenuInfoMap1" type="com.qf.menuinfo.dto.MenuInfoDto">
+        <id property="id" column="menuid"/>
+        <result property="name" column="menuName"/>
+        <result property="url" column="jumpurl"/>
+        <result property="icon" column="icourl"/>
+        <result property="pid" column="parentId"/>
+    </resultMap>
+    <select id="selectUserRoleMenu" resultMap="getAllMenuInfoMap1" parameterType="com.qf.menuinfo.vo.UserRoleVo">
+        select DISTINCT menu.* from MENU,(select rm.MENUID from ROLE_MENU rm,(select roleId from User_role where UserId=#{userId})tab where rm.ROLEID=tab.roleId)tab2 where tab2.MENUID=MENU.MENUID
+    </select>
+
+</mapper>

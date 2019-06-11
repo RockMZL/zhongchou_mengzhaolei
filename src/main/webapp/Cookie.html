@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script type="text/javascript">
+    document.cookie = "userName=meng;path=/"
+    document.cookie = "passWord=123456;path=/"
+</script>
+
+<form name="formUpLoad" action="/fileUpload" method="post" enctype="multipart/form-data">
+    <input type="file" name="file">
+
+    <input type="submit" value="upload"/>
+</form>
+<!--<form name="formUpLoad" action="/testDownload" method="post" enctype="multipart/form-data">
+    <input type="file" name="file">
+    <input type="submit" value="download"/>
+</form>-->
+</body>
+</html>

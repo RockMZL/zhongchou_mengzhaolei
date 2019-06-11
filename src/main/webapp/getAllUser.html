@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="vue/vue-2.2.2-min.js"></script>
+    <script src="jquery/jquery-2.1.1.min.js"></script>
+</head>
+<body>
+<table id="dataTable">
+    <tr>
+        <td>用户ID:</td>
+        <td>用户名:</td>
+        <td>用户密码:</td>
+        <td>用户账号:</td>
+        <td>邮箱地址:</td>
+    </tr>
+    <tr v-for="user in users">
+        <td>{{user.userId}}</td>
+        <td>{{user.userName}}</td>
+        <td>{{user.userPass}}</td>
+        <td>{{user.accounts}}</td>
+        <td>{{user.email}}</td>
+    </tr>
+    <tr>
+        <td colspan="5"><button @click="remove">清空数据</button></td>
+    </tr>
+</table>
+<script>
+
+    new Vue({
+        el:"#dataTable",
+        data:{
+            users:[]
+        },
+        created:function () {
+            var created = this;
+            $.ajax({
+                url:"getAllUserInfo",
+                type:"POST",
+                dataType:"json",
+                async:false,
+
+            }).then(function (responseValue) {
+                created.users=responseValue;
+            }).fail(function () {
+                alert("查询失败")
+            })
+        },
+        methods:{
+            remove:function () {
+               this.users=[];
+            }
+        }
+    })
+</script>
+</body>
+</html>
